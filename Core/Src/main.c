@@ -74,6 +74,24 @@ static void MX_ADC1_Init(void);
 	//set number of conversion to num of channels
 	//Rank configures which order the channels get converted
 
+uint16_t ADC_VAL[2];	//we need to provide an array to store the ADC data for DMA ADC.
+						//ADC values are automatically stored. no need to use get value function
+uint8_t scaledValue = 0;	//maps the raw ADC value to more convenient value eg [0-100]
+int count=0;
+
+
+//function to map the raw ADC values to scaled values, long has bigger range than int
+long map(long x, long in_min, long in_max, long out_min, long out_max)
+{
+  return (x - in_min) * (out_max - out_min + 1) / (in_max - in_min + 1) + out_min;
+}
+
+void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc)
+{
+	count++;
+}
+
+
 /* USER CODE END 0 */
 
 /**
