@@ -138,9 +138,17 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
 
+
 	  HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5);
 	  count++;
+	  if((count % 2) == 0)
+	  {
+		  HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_8);
+	  }
       HAL_Delay(500);
+
+
+
 
       if (isADCFinished == 1)
       {
