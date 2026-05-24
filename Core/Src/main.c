@@ -59,6 +59,21 @@ static void MX_ADC1_Init(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 
+	//In MultiChannel DMA Normal Mode, the ADC samples several channels in sequence, and the DMA transfers
+	//each conversion result into memory (usually an array). Once the DMA converts and transfers all the
+	//configured channels, it stops automatically. At this point, the CPU processes the results,
+	//We can restart the DMA manually in the code if more conversion is needed.
+	//Suitable for periodic or triggered sampling (eg reading several sensors once per second)
+
+	//configuration:
+	//Scan Conversion Mode enabled, cause multichannel conv.
+	//Continuous Conversion Mode disabled, cause we only want to adc when needed.
+	//DMA Continuous Request disabled, we want DMA trigger only when needed.
+	//End of Conversion Selection, set EOC Flag at the end of all conversions. st ConvCmplt interrupt
+	//	only triggers after all conversions are done, not for each channel.
+	//set number of conversion to num of channels
+	//Rank configures which order the channels get converted
+
 /* USER CODE END 0 */
 
 /**
