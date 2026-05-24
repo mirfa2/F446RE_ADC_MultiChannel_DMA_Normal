@@ -82,7 +82,8 @@ int count=0;
 
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc)
 {
-	count++;
+	isADCFinished = 1;
+	//we can process the data here or in the while loop, depends
 }
 
 
@@ -140,6 +141,17 @@ int main(void)
 	  HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5);
 	  count++;
       HAL_Delay(500);
+
+      if (isADCFinished == 1)
+      {
+    	  //process data
+
+    	  //reset adc for the next conversion
+    	  isADCFinished = 0;
+    	  HAL_ADC_Start_DMA(&hadc1, (uint32_t *)ADC_VAL, 2);
+    	  //ADC triggers at 2Hz despite being handled by DMA because Normal mode config
+      }
+
   }
   /* USER CODE END 3 */
 }
