@@ -74,6 +74,17 @@ static void MX_ADC1_Init(void);
 	//set number of conversion to num of channels
 	//Rank configures which order the channels get converted
 
+//ADC_Clock_Frequency = Internal_Bus_Peripheral_Clock_Freq / ADC_Prescaler
+//ADC_Conversion_Time = (Sampling_Cycles + Conversion_Cycles) / ADC_Clock_Frequency
+//ADC_Sampling_Rate = 1/ADC_Conversion_Time
+
+//eg: ADC1 connected to APB1, let APB1 peripheral clock = 4 Mhz and ADC_Prescaler = 6
+//	  ADC_Clock_Freq = 666.67 kHz
+//	  Sampling_Cycles is selected in the ADC setting, min 3
+//	  Conversion_Cycles depends on MCU and ADC resolution, for F446RE, 12bit ADC requires 12 cycles
+//	  let Sampling_Cycles = 480, and 12bit ADC, then ADC_Conversion_Time = 492/666.67kHz = 738 us
+//	  ADC_Sampling_Rate = 1/738us = 1353 samples per seconds
+
 uint16_t ADC_VAL[2];	//we need to provide an array to store the ADC data for DMA ADC.
 						//ADC values are automatically stored. no need to use get value function
 int isADCFinished = 0;	//Flag var when all conversions complete
@@ -157,7 +168,9 @@ int main(void)
     	  //reset adc for the next conversion
     	  isADCFinished = 0;
     	  HAL_ADC_Start_DMA(&hadc1, (uint32_t *)ADC_VAL, 2);
-    	  //ADC triggers at 2Hz despite being handled by DMA because Normal mode config
+    	  //ADC triggers at 2Hz despite being handled by DMA because its in Normal mode
+    	  //and we trigger it manually in the main loop. Better ways to periodically call
+    	  //DMA is by using external trigger source using timer. better sampling rate control too
       }
 
   }
